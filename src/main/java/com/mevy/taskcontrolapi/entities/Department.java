@@ -1,5 +1,9 @@
 package com.mevy.taskcontrolapi.entities;
 
+import java.time.Instant;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,5 +43,13 @@ public class Department {
 
     @Column
     private String description;
+
+    @Column
+    @JsonFormat(
+        pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+        timezone = "UTC",
+        shape = JsonFormat.Shape.STRING
+    )
+    private Instant disabledAt;
 
 }

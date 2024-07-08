@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mevy.taskcontrolapi.entities.User;
+import com.mevy.taskcontrolapi.entities.dtos.UserCreateDTO;
+import com.mevy.taskcontrolapi.entities.dtos.UserUpdateDTO;
 import com.mevy.taskcontrolapi.services.UserService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -34,7 +37,8 @@ public class UserResource {
 
     @GetMapping("/fullName/{fullName}")
     public ResponseEntity<User> findByfullName(
-            @PathVariable String fullName
+            @PathVariable
+            String fullName
     ) {
         User user = userService.findByFullName(fullName);
         return ResponseEntity.ok().body(user);
@@ -42,8 +46,11 @@ public class UserResource {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @RequestBody User user
+            @RequestBody
+            @Valid
+            UserCreateDTO userCreateDTO
     ) {
+        User user = userService.fromDTO(userCreateDTO);
         user = userService.create(user);
         URI uri = ServletUriComponentsBuilder
                                             .fromCurrentRequest()
@@ -55,7 +62,8 @@ public class UserResource {
 
     @DeleteMapping("/fullName/{fullName}")
     public ResponseEntity<Void> deleteByFullName(
-            @PathVariable String fullName
+            @PathVariable
+            String fullName
     ) {
         userService.deleteByFullName(fullName);
         return ResponseEntity.noContent().build();
@@ -63,9 +71,13 @@ public class UserResource {
 
     @PutMapping("/fullName/{fullName}")
     public ResponseEntity<Void> updateByFullName(
-            @PathVariable String fullName,
-            @RequestBody User user
+            @PathVariable
+            String fullName,
+            @RequestBody
+            @Valid
+            UserUpdateDTO userUpdateDTO
     ) {
+        User user = userService.fromDTO(userUpdateDTO);
         userService.updateByFullName(fullName, user);
         return ResponseEntity.noContent().build();
     }

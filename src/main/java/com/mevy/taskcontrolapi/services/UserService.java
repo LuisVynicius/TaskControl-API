@@ -6,6 +6,8 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.User;
+import com.mevy.taskcontrolapi.entities.dtos.UserCreateDTO;
+import com.mevy.taskcontrolapi.entities.dtos.UserUpdateDTO;
 import com.mevy.taskcontrolapi.repositories.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -38,6 +40,26 @@ public class UserService {
     public void updateByFullName(String fullName, User newUser) {
         User user = userRepository.findByFullName(fullName).get();
         updateData(user, newUser);
+    }
+
+    public User fromDTO(UserCreateDTO userCreateDTO) {
+        return new User(
+                null,
+                userCreateDTO.fullName(),
+                userCreateDTO.email(),
+                userCreateDTO.password(),
+                null
+            );
+    }
+
+    public User fromDTO(UserUpdateDTO userUpdateDTO) {
+        return new User(
+                null,
+                userUpdateDTO.fullName(),
+                null,
+                userUpdateDTO.password(),
+                null
+            );
     }
 
     private void updateData(User user, User newUser) {

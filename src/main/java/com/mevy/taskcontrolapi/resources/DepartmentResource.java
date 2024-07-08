@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mevy.taskcontrolapi.entities.Department;
+import com.mevy.taskcontrolapi.entities.dtos.DepartmentDTO;
 import com.mevy.taskcontrolapi.services.DepartmentService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -40,7 +42,8 @@ public class DepartmentResource {
 
     @GetMapping("/name/{name}")
     public ResponseEntity<Department> findByName(
-            @PathVariable String name
+            @PathVariable
+            String name
     ) {
         Department department = departmentService.findByName(name);
         return ResponseEntity.ok().body(department);
@@ -48,8 +51,11 @@ public class DepartmentResource {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @RequestBody Department department
+            @RequestBody
+            @Valid
+            DepartmentDTO departmentDTO
     ) {
+        Department department = departmentService.fromDTO(departmentDTO);
         department = departmentService.create(department);
         URI uri = ServletUriComponentsBuilder
                                             .fromCurrentRequest()
@@ -61,7 +67,8 @@ public class DepartmentResource {
 
     @DeleteMapping("/name/{name}")
     public ResponseEntity<Void> deleteByName(
-            @PathVariable String name
+            @PathVariable
+            String name
     ) {
         departmentService.deleteByName(name);
         return ResponseEntity.noContent().build();
@@ -69,9 +76,13 @@ public class DepartmentResource {
 
     @PutMapping("/name/{name}")
     public ResponseEntity<Void> updateByName(
-            @PathVariable String name,
-            @RequestBody Department department
+            @PathVariable
+            String name,
+            @RequestBody
+            @Valid
+            DepartmentDTO departmentDTO
     ) {
+        Department department = departmentService.fromDTO(departmentDTO);
         departmentService.updateByName(name, department);
         return ResponseEntity.noContent().build();
     }

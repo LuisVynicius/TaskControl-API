@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mevy.taskcontrolapi.entities.Task;
+import com.mevy.taskcontrolapi.entities.dtos.TaskDTO;
 import com.mevy.taskcontrolapi.services.TaskService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -34,7 +36,8 @@ public class TaskResource {
 
     @GetMapping("/name/{name}")
     public ResponseEntity<Task> findByName(
-            @PathVariable String name
+            @PathVariable
+            String name
     ) {
         Task task = taskService.findByName(name);
         return ResponseEntity.ok().body(task);
@@ -42,8 +45,11 @@ public class TaskResource {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @RequestBody Task task
+            @RequestBody
+            @Valid
+            TaskDTO taskDTO
     ) {
+        Task task = taskService.fromDTO(taskDTO);
         task = taskService.create(task);
         URI uri = ServletUriComponentsBuilder
                                             .fromCurrentRequest()
@@ -55,7 +61,8 @@ public class TaskResource {
 
     @DeleteMapping("/name/{name}")
     public ResponseEntity<Void> deleteByName(
-            @PathVariable String name
+            @PathVariable
+            String name
     ) {
         taskService.deleteByName(name);
         return ResponseEntity.noContent().build();
@@ -63,9 +70,13 @@ public class TaskResource {
 
     @PutMapping("/name/{name}")
     public ResponseEntity<Void> updateByname(
-            @PathVariable String name,
-            @RequestBody Task task
+            @PathVariable
+            String name,
+            @RequestBody
+            @Valid
+            TaskDTO taskDTO
     ) {
+        Task task = taskService.fromDTO(taskDTO);
         taskService.updateByName(name, task);
         return ResponseEntity.noContent().build();
     }

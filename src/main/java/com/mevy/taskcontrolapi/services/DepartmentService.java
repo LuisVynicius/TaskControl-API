@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.Department;
+import com.mevy.taskcontrolapi.entities.dtos.DepartmentDTO;
 import com.mevy.taskcontrolapi.repositories.DepartmentRepository;
 
 import lombok.AllArgsConstructor;
@@ -44,6 +45,16 @@ public class DepartmentService {
         Department department = departmentRepository.findByName(name).get();
         updateData(department, newDepartment);
         departmentRepository.save(department);
+    }
+
+    public Department fromDTO(DepartmentDTO departmentDTO) {
+        Department department = new Department(
+                null,
+                departmentDTO.name(),
+                departmentDTO.description(),
+                null
+            );
+        return department;
     }
 
     private void updateData(Department department, Department newDepartment) {

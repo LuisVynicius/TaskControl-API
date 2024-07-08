@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.Task;
+import com.mevy.taskcontrolapi.entities.dtos.TaskDTO;
 import com.mevy.taskcontrolapi.repositories.TaskRepository;
 
 import lombok.AllArgsConstructor;
@@ -41,6 +42,14 @@ public class TaskService {
         Task task = taskRepository.findByName(name).get();
         updateData(task, newTask);
         taskRepository.save(task);
+    }
+
+    public Task fromDTO(TaskDTO taskDTO) {
+        return new Task(
+                null,
+                taskDTO.name(),
+                taskDTO.description()
+            );
     }
 
     private void updateData(Task task, Task newTask) {

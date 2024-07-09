@@ -3,12 +3,15 @@ package com.mevy.taskcontrolapi.services;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.User;
 import com.mevy.taskcontrolapi.entities.dtos.UserCreateDTO;
 import com.mevy.taskcontrolapi.entities.dtos.UserUpdateDTO;
 import com.mevy.taskcontrolapi.repositories.UserRepository;
+import com.mevy.taskcontrolapi.services.exceptions.DatabaseIntegrityException;
+import com.mevy.taskcontrolapi.services.exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -24,42 +27,49 @@ public class UserService {
     }
 
     public User findByFullName(String name) {
-        User user = userRepository.findByFullName(name).get();
+        User user = userRepository.findByFullName(name).orElseThrow(
+            () -> new ResourceNotFoundException(User.class, name)
+        );
         return user;
     }
 
     public User create(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new DatabaseIntegrityException("Email already in use. ");
+        }
         user = userRepository.save(user);
         return user;
     }
 
     public void deleteByFullName(String fullName) {
-        userRepository.deleteByFullName(fullName);
+        try {
+            userRepository.deleteByFullName(fullName);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseIntegrityException("This user cannot be deleted. ");
+        }
     }
 
     public void updateByFullName(String fullName, User newUser) {
-        User user = userRepository.findByFullName(fullName).get();
-        updateData(user, newUser);
+        User user = findByFullName(fullName);
+         updateData(user, newUser);
     }
 
     public User fromDTO(UserCreateDTO userCreateDTO) {
-        return new User(
-                null,
-                userCreateDTO.fullName(),
-                userCreateDTO.email(),
-                userCreateDTO.password(),
-                null
-            );
+        
+        User user = User.builder()
+                        .fullName(userCreateDTO.fullName())
+                        .email(userCreateDTO.email())
+                        .password(userCreateDTO.password())
+                        .build();
+        return user;
     }
 
     public User fromDTO(UserUpdateDTO userUpdateDTO) {
-        return new User(
-                null,
-                userUpdateDTO.fullName(),
-                null,
-                userUpdateDTO.password(),
-                null
-            );
+        User user = User.builder()
+                        .fullName(userUpdateDTO.fullName())
+                        .password(userUpdateDTO.password())
+                        .build();
+        return user;
     }
 
     private void updateData(User user, User newUser) {

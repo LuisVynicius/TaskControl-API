@@ -3,11 +3,14 @@ package com.mevy.taskcontrolapi.services;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.Department;
 import com.mevy.taskcontrolapi.entities.dtos.DepartmentDTO;
 import com.mevy.taskcontrolapi.repositories.DepartmentRepository;
+import com.mevy.taskcontrolapi.services.exceptions.DatabaseIntegrityException;
+import com.mevy.taskcontrolapi.services.exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -28,32 +31,42 @@ public class DepartmentService {
     }
 
     public Department findByName(String name) {
-        Department department = departmentRepository.findByName(name).get();
+        Department department = departmentRepository.findByName(name).orElseThrow(
+            () -> new ResourceNotFoundException(Department.class, name)
+        );
         return department;
     }
 
     public Department create(Department department) {
+        if (departmentRepository.existsByName(department.getName())) {
+            throw new DatabaseIntegrityException("Name already in use. ");
+        }
         department = departmentRepository.save(department);
         return department;
     }
 
     public void deleteByName(String name) {
-        departmentRepository.deleteByName(name);
+        try {
+            departmentRepository.deleteByName(name);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseIntegrityException("This department cannot be deleted. ");
+        }
     }
 
     public void updateByName(String name, Department newDepartment) {
+        if (departmentRepository.existsByName(newDepartment.getName())) {
+            throw new DatabaseIntegrityException("Name already in use. ");
+        }
         Department department = departmentRepository.findByName(name).get();
         updateData(department, newDepartment);
         departmentRepository.save(department);
     }
 
     public Department fromDTO(DepartmentDTO departmentDTO) {
-        Department department = new Department(
-                null,
-                departmentDTO.name(),
-                departmentDTO.description(),
-                null
-            );
+        Department department = Department.builder()
+                                            .name(departmentDTO.name())
+                                            .description(departmentDTO.description())
+                                            .build();
         return department;
     }
 

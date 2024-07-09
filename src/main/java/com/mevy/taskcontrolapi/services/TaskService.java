@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.mevy.taskcontrolapi.entities.Task;
 import com.mevy.taskcontrolapi.entities.dtos.TaskDTO;
 import com.mevy.taskcontrolapi.repositories.TaskRepository;
+import com.mevy.taskcontrolapi.services.exceptions.DatabaseIntegrityException;
+import com.mevy.taskcontrolapi.services.exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -23,7 +25,9 @@ public class TaskService {
     }
 
     public Task findByName(String name) {
-        Task task = taskRepository.findByName(name).get();
+        Task task = taskRepository.findByName(name).orElseThrow(
+            () -> new ResourceNotFoundException(Task.class, name)
+        );
         return task;
     }
 
@@ -35,21 +39,26 @@ public class TaskService {
     }
 
     public void deleteByName(String name) {
-        taskRepository.deleteByName(name);
+        try {
+            taskRepository.deleteByName(name);
+        } catch (Exception e) {
+            throw new DatabaseIntegrityException("This Task cannot be deleted. ");
+        }
     }
 
     public void updateByName(String name, Task newTask) {
-        Task task = taskRepository.findByName(name).get();
+        Task task = findByName(name);
         updateData(task, newTask);
         taskRepository.save(task);
     }
 
     public Task fromDTO(TaskDTO taskDTO) {
-        return new Task(
-                null,
-                taskDTO.name(),
-                taskDTO.description()
-            );
+        Task task = Task.builder()
+                        .name(taskDTO.name())
+                        .description(taskDTO.description())
+                        .build();
+        return task;
+        
     }
 
     private void updateData(Task task, Task newTask) {

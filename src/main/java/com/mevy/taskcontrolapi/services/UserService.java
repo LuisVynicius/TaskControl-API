@@ -33,6 +33,13 @@ public class UserService {
         return user;
     }
 
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+            () -> new ResourceNotFoundException(User.class, email)
+        );
+        return user;
+    }
+
     public User create(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new DatabaseIntegrityException("Email already in use. ");

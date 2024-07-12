@@ -110,8 +110,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Deu não");
+        int status = HttpStatus.UNAUTHORIZED.value();
+        response.setStatus(status);
+        response.setContentType("Application/json");
+        ErrorResponse errorResponse = new ErrorResponse(Instant.now(), status, "Unauthorized authentication", "Authentication failed");
+        response.getWriter().write(errorResponse.toJson());
     }
 
 }

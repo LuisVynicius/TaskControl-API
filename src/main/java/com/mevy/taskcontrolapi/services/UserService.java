@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.User;
@@ -20,6 +21,8 @@ import lombok.AllArgsConstructor;
 public class UserService {
     
     private final UserRepository userRepository;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> findAll() {
         List<User> users = userRepository.findAll();
@@ -44,6 +47,7 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new DatabaseIntegrityException("Email already in use. ");
         }
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
         return user;
     }
@@ -84,7 +88,7 @@ public class UserService {
             Objects.nonNull(newUser.getFullName()) ? newUser.getFullName() : user.getFullName()
         );
         user.setPassword(
-            Objects.nonNull(newUser.getPassword()) ? newUser.getPassword() : user.getPassword()
+            Objects.nonNull(newUser.getPassword()) ? bCryptPasswordEncoder.encode(newUser.getPassword()) : user.getPassword()
         );
     }
 

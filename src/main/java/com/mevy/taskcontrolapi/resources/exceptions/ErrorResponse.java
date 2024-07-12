@@ -46,5 +46,15 @@ public class ErrorResponse implements Serializable{
         String field;
         String message;
     }
+
+    public String toJson() {
+        return String.format(
+            "\"moment\" : %s, \"status\" : %d, \"title\" : %s, \"message\" : %s",
+            moment,
+            status,
+            title,
+            message
+        );
+    }
     
 }

@@ -49,7 +49,7 @@ public class ErrorResponse implements Serializable{
 
     public String toJson() {
         return String.format(
-            "\"moment\" : %s, \"status\" : %d, \"title\" : %s, \"message\" : %s",
+            "{ \"moment\" : \"%s\", \"status\" : %d, \"title\" : \"%s\", \"message\" : \"%s\" }",
             moment,
             status,
             title,

@@ -1,6 +1,7 @@
 package com.mevy.taskcontrolapi.entities.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record TaskDTO(
@@ -23,7 +24,12 @@ public record TaskDTO(
             max = 255,
             message = "The Task description must have between 1-255 characters. "
         )
-        String description
+        String description,
+
+        @NotNull(
+            message = "The task must have a department"
+        )
+        Long id
 
 ) {
     

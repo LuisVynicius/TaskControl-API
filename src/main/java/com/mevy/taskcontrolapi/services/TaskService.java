@@ -68,6 +68,9 @@ public class TaskService {
         task.setDescription(
             Objects.nonNull(newTask.getDescription()) ? newTask.getDescription() : task.getDescription()
         );
+        task.setIsCompleted(
+            Objects.nonNull(newTask.getIsCompleted()) ? newTask.getIsCompleted() : task.getIsCompleted()
+        );
     }
 
 }

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,18 +29,21 @@ public class DepartmentResource {
     
     private final DepartmentService departmentService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/all")
     public ResponseEntity<List<Department>> findAll(){ 
         List<Department> departments = departmentService.findAll();
         return ResponseEntity.ok().body(departments);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/enableds")
     public ResponseEntity<List<Department>> findEnabledDepartments(){ 
         List<Department> departments = departmentService.findEnabledDepartments();
         return ResponseEntity.ok().body(departments);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/name/{name}")
     public ResponseEntity<Department> findByName(
             @PathVariable
@@ -49,6 +53,7 @@ public class DepartmentResource {
         return ResponseEntity.ok().body(department);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Void> create(
             @RequestBody
@@ -65,6 +70,7 @@ public class DepartmentResource {
         return ResponseEntity.created(uri).build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/name/{name}")
     public ResponseEntity<Void> deleteByName(
             @PathVariable
@@ -74,6 +80,7 @@ public class DepartmentResource {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/name/{name}")
     public ResponseEntity<Void> updateByName(
             @PathVariable

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.mevy.taskcontrolapi.entities.User;
 import com.mevy.taskcontrolapi.entities.dtos.UserCreateDTO;
 import com.mevy.taskcontrolapi.entities.dtos.UserUpdateDTO;
 import com.mevy.taskcontrolapi.repositories.UserRepository;
+import com.mevy.taskcontrolapi.securities.UserDetailsImpl;
 import com.mevy.taskcontrolapi.services.exceptions.DatabaseIntegrityException;
 import com.mevy.taskcontrolapi.services.exceptions.ResourceNotFoundException;
 
@@ -90,6 +92,16 @@ public class UserService {
         user.setPassword(
             Objects.nonNull(newUser.getPassword()) ? bCryptPasswordEncoder.encode(newUser.getPassword()) : user.getPassword()
         );
+    }
+
+    public User getAuthenticatedUser() {
+        try {
+            UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User user = findByEmail(userDetailsImpl.getUsername());
+            return user;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

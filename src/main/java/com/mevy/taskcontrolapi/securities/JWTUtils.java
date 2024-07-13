@@ -31,7 +31,15 @@ public class JWTUtils {
                     .compact();
     }
 
-    public boolean tokenIsValid(String token) {
+    public String getEmail(String token) {
+        Claims claims = getClaims(token);
+        if (Objects.nonNull(claims)) {
+            return claims.getSubject();
+        }
+        return null;
+    }
+
+    public boolean isValidToken(String token) {
         Claims claims = getClaims(token);
 
         if (Objects.nonNull(claims)) {

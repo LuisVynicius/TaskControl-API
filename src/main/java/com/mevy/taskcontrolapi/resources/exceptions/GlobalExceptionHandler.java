@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.validation.FieldError;
@@ -59,6 +60,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Internal Server Error"
         );
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Object> handleAuthorizationDeniedException(
+            AuthorizationDeniedException authorizationDeniedException,
+            WebRequest request
+    ) {
+        return buildErrorResponse(authorizationDeniedException, HttpStatus.FORBIDDEN, "Access denied");
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

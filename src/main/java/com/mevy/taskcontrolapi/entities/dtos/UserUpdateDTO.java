@@ -15,14 +15,6 @@ public record UserUpdateDTO(
         )
         String fullName,
 
-        @NotBlank(
-            message = "The User password must have at least one character. "
-        )
-        @Size(
-            min = 1,
-            max = 255,
-            message = "The User password must have between 1-255 characters. "
-        )
         String password
 
 ) {

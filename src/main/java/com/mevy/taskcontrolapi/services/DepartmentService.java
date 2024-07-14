@@ -57,9 +57,13 @@ public class DepartmentService {
         if (departmentRepository.existsByName(newDepartment.getName())) {
             throw new DatabaseIntegrityException("Name already in use. ");
         }
-        Department department = departmentRepository.findByName(name).get();
-        updateData(department, newDepartment);
-        departmentRepository.save(department);
+        Department department = findByName(name);
+        try {
+            updateData(department, newDepartment);
+            departmentRepository.save(department);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseIntegrityException("Something bad occured. ");
+        }
     }
 
     public Department fromDTO(DepartmentDTO departmentDTO) {

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mevy.taskcontrolapi.entities.enums.UserProfileEnum;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -17,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -78,6 +80,9 @@ public class User {
         name = "department_id"
     )
     private Department department;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private UserInformations userInformations;
 
     public Set<UserProfileEnum> getAuthorities() {
         return authorities

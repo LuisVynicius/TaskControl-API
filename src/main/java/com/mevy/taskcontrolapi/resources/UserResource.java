@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,12 +30,14 @@ public class UserResource {
     
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<User>> findAll() {
         List<User> users = userService.findAll();
         return ResponseEntity.ok().body(users);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/fullName/{fullName}")
     public ResponseEntity<User> findByfullName(
             @PathVariable
@@ -60,6 +63,7 @@ public class UserResource {
         return ResponseEntity.created(uri).build();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/fullName/{fullName}")
     public ResponseEntity<Void> deleteByFullName(
             @PathVariable
@@ -69,16 +73,15 @@ public class UserResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/fullName/{fullName}")
-    public ResponseEntity<Void> updateByFullName(
-            @PathVariable
-            String fullName,
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/current")
+    public ResponseEntity<Void> updateByCurrentUser(
             @RequestBody
             @Valid
             UserUpdateDTO userUpdateDTO
     ) {
         User user = userService.fromDTO(userUpdateDTO);
-        userService.updateByFullName(fullName, user);
+        userService.updateByCurrentUser(user);
         return ResponseEntity.noContent().build();
     }
 

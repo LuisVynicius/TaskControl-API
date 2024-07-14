@@ -1,5 +1,6 @@
 package com.mevy.taskcontrolapi.services;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mevy.taskcontrolapi.entities.User;
+import com.mevy.taskcontrolapi.entities.UserInformations;
 import com.mevy.taskcontrolapi.entities.dtos.UserCreateDTO;
 import com.mevy.taskcontrolapi.entities.dtos.UserUpdateDTO;
 import com.mevy.taskcontrolapi.repositories.UserRepository;
@@ -50,6 +52,12 @@ public class UserService {
             throw new DatabaseIntegrityException("Email already in use. ");
         }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setUserInformations(
+            UserInformations
+                            .builder()
+                            .createDate(Instant.now())
+                            .build()
+        );
         user = userRepository.save(user);
         return user;
     }
@@ -62,9 +70,14 @@ public class UserService {
         }
     }
 
-    public void updateByFullName(String fullName, User newUser) {
-        User user = findByFullName(fullName);
-         updateData(user, newUser);
+    public void updateByCurrentUser(User newUser) {
+        User user = getAuthenticatedUser();
+        try {
+            updateData(user, newUser);
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseIntegrityException("Something bad occured. ");
+        }
     }
 
     public User fromDTO(UserCreateDTO userCreateDTO) {

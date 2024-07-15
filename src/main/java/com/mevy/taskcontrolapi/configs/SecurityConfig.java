@@ -28,6 +28,12 @@ public class SecurityConfig {
       "/user"
     };
 
+    private final String[] PUBLIC_ALL = {
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/swagger-ui.html"
+    };
+
     private AuthenticationManager authenticationManager;
     
     @Autowired
@@ -50,6 +56,7 @@ public class SecurityConfig {
                     )
                     .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST).permitAll()
+                        .requestMatchers(PUBLIC_ALL).permitAll()
                         .anyRequest().authenticated()
                     )
                     .addFilter(new JWTAuthenticationFilter(authenticationManager, jwtUtils))

@@ -46,7 +46,7 @@ public class Seed implements CommandLineRunner {
         User user01 = User.builder()
                             .fullName("User01")
                             .email("Email01")
-                            .password(bCryptPasswordEncoder.encode("senha1234"))
+                            .password(bCryptPasswordEncoder.encode("1234"))
                             .authorities(Set.of(1,2))
                             .department(department01)
                             .build();
@@ -54,7 +54,7 @@ public class Seed implements CommandLineRunner {
         User user02 = User.builder()
                             .fullName("User02")
                             .email("Email02")
-                            .password(bCryptPasswordEncoder.encode("senha1234"))
+                            .password(bCryptPasswordEncoder.encode("1234"))
                             .authorities(Set.of(2))
                             .department(department02)
                             .build();

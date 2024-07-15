@@ -87,7 +87,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             DatabaseIntegrityException exception,
             WebRequest webRequest
     ) {
-        return null;
+        return buildErrorResponse(
+            exception,
+            HttpStatus.CONFLICT,
+            "Database integrity violation exception"
+        );
     }
 
     private ResponseEntity<Object> buildErrorResponse(

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mevy.taskcontrolapi.entities.Department;
 import com.mevy.taskcontrolapi.entities.dtos.DepartmentDTO;
+import com.mevy.taskcontrolapi.resources.interfaces.DepartmentDocsInterface;
 import com.mevy.taskcontrolapi.services.DepartmentService;
 
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/department")
 @AllArgsConstructor
-public class DepartmentResource {
+public class DepartmentResource implements DepartmentDocsInterface{
     
     private final DepartmentService departmentService;
 

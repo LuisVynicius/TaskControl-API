@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.mevy.taskcontrolapi.entities.User;
 import com.mevy.taskcontrolapi.entities.dtos.UserCreateDTO;
 import com.mevy.taskcontrolapi.entities.dtos.UserUpdateDTO;
+import com.mevy.taskcontrolapi.resources.interfaces.UserDocsInterface;
 import com.mevy.taskcontrolapi.services.UserService;
 
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
-public class UserResource {
+public class UserResource implements UserDocsInterface {
     
     private final UserService userService;
 

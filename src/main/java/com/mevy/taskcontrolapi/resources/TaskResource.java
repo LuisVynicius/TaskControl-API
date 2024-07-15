@@ -17,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mevy.taskcontrolapi.entities.Task;
 import com.mevy.taskcontrolapi.entities.dtos.TaskDTO;
+import com.mevy.taskcontrolapi.resources.interfaces.TaskDocsInterface;
 import com.mevy.taskcontrolapi.services.TaskService;
 
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/task")
 @AllArgsConstructor
-public class TaskResource {
+public class TaskResource implements TaskDocsInterface {
     
     private final TaskService taskService;
 
@@ -85,7 +86,7 @@ public class TaskResource {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/name/{name}")
-    public ResponseEntity<Void> updateByname(
+    public ResponseEntity<Void> updateByName(
             @PathVariable
             String name,
             @RequestBody

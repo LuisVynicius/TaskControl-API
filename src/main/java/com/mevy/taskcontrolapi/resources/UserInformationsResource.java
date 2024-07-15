@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mevy.taskcontrolapi.entities.UserInformations;
 import com.mevy.taskcontrolapi.entities.dtos.UserInformationsUpdateDTO;
+import com.mevy.taskcontrolapi.resources.interfaces.UserInformationsDocsInterface;
 import com.mevy.taskcontrolapi.services.UserInformationsService;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/userInformations")
 @AllArgsConstructor
-public class UserInformationsResource {
+public class UserInformationsResource implements UserInformationsDocsInterface {
     
     private final UserInformationsService userInformationsService;
 
